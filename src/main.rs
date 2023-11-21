@@ -1,15 +1,15 @@
+mod lock_utils;
 mod service;
 
 use service::Service;
-use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
 fn main() {
-    let service = Arc::new(Service::new());
+    let service = Service::new();
 
-    let service1 = Arc::clone(&service);
-    let service2 = Arc::clone(&service);
+    let service1 = service.clone();
+    let service2 = service.clone();
 
     let thread1 = thread::spawn(move || {
         for i in 0..5 {
@@ -17,7 +17,6 @@ fn main() {
                 Ok(counts) => println!("Thread 1: Iteration {}: Counts = {:?}", i, counts),
                 Err(e) => {
                     eprintln!("Thread 1: Iteration {}: Error = {}", i, e);
-                    // Handle error, e.g., retry, log, or break
                     break;
                 }
             }
@@ -31,7 +30,6 @@ fn main() {
                 Ok(counts) => println!("Thread 2: Iteration {}: Counts = {:?}", i, counts),
                 Err(e) => {
                     eprintln!("Thread 2: Iteration {}: Error = {}", i, e);
-                    // Handle error, e.g., retry, log, or break
                     break;
                 }
             }
